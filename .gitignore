@@ -3,5 +3,8 @@ docs.json
 __dummy.html
 *.o
 *.obj
-/.project
+*.sublime-workspace
+*.txt
+*.exe
 /.settings
+/.project
