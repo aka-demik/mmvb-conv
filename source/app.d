@@ -24,7 +24,7 @@ void main() {
 	string result;
 
 	MyOrders[MyKey] orders;
-	foreach(e; getClipboardText()[0..$-1].splitter("\r\n").filter!"strip(a).length") {
+	foreach(e; getClipboardText().splitter("\r\n").filter!"strip(a).length") {
 		string[] cols = e.splitter("\t").array();
 
 		if (cols.length <= 4)
