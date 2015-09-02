@@ -37,13 +37,13 @@ void main() {
 
 		const keyo = MyKey(
 			cols[1],
-			cols[2], 
-			cols[4], 
+			cols[2],
+			cols[4],
 			cols[12]);
 		const keyc = MyKey(
-			cols[1], 
-			antiOper(cols[2]), 
-			cols[4], 
+			cols[1],
+			antiOper(cols[2]),
+			cols[4],
 			cols[12]);
 
 		if (keyc in orders) { // Если есть что закрывать
@@ -70,8 +70,29 @@ void main() {
 		foreach(e; v)
 			result ~= format("%s\t%s\r\n", e.open, e.n);
 
+	result = result
+		.dup()
+		.strip()
+		.split("\r\n")
+		.sort!(rowByIdCloseDate)
+		.join("\r\n")
+		.to!string();
 	setClipboardText(result);
 	writeln("Done OK");
+}
+
+bool rowByIdCloseDate(char[] a, char[] b) {
+	auto aa = a.split("\t");
+	auto bb = b.split("\t");
+	int ia = (aa.length > 7) ? aa[7].to!int : 0;
+	int ib = (bb.length > 7) ? bb[7].to!int : 0;
+	string da = (aa.length > 13) ? aa[13].to!string : "01.01.5000 00:00";
+	string db = (bb.length > 13) ? bb[13].to!string : "01.01.5000 00:00";
+	if (ia == ib) {
+		return excelStrToTime(da) < excelStrToTime(db);
+	} else {
+		return ia < ib;
+	}
 }
 
 private:
@@ -109,7 +130,7 @@ SysTime excelStrToTime(in string s) {
 		.replace(":", ".")
 		.splitter(".")
 		.array();
-	if (cols.length <= 5)
+	if (cols.length < 5)
 		throw new Exception("Invalid date-time '" ~ s ~ "'");
 	int tmp = cols[2].to!int;
 	return SysTime(DateTime(
